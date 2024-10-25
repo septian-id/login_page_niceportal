@@ -24,6 +24,7 @@ contact             : 'https://wa.me/6281234567890',
 ### (Required) Bypass Server URL : 
 ```js
 /ip hotspot walled-garden ip
+add action=accept disabled=no dst-host="niceportal.web.id";
 add action=accept disabled=no dst-host="desktop.niceradius.com";
 add action=accept disabled=no dst-host="duitku.com";
 ```
