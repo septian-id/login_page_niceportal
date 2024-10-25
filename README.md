@@ -4,7 +4,7 @@
 - Login Mode Member
 - Payment Gateway
 - Riwayat Transaksi
-- Auto Clear Active Session
+- Auto Clear Active Session, Untuk mengatasi masalah random MAC Address yang sering menyebabkan gagal login.
 - Gambar Slide
 
 Edit file config.js sebelum digunakan
