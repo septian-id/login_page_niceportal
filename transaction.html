@@ -21,7 +21,6 @@
 	</head>
 	<body class="light-gray card">
 		<script type="text/javascript" src="assets/js/jquery.min.js"></script>
-		<script type="text/javascript" src="md5.js"></script>
 		<script type="text/javascript" src="config.js"></script>
 		<div class="bar theme"><a href="login.html" class="bar-item button"><i class="fa fa-arrow-left"></i> Kembali</a></div>
 		<div class="padding-small margin-top">
@@ -42,34 +41,37 @@
 		<script type="text/javascript">
 			var api_url = config.api_url;
 			var loader = document.getElementsByClassName('loader');
-			var color = [
-                "theme-amber.css",
-                "theme-black.css",
-                "theme-red.css",
-                "theme-blue-grey.css",
-                "theme-blue.css",
-                "theme-cyan.css",
-                "theme-dark-grey.css",
-                "theme-deep-orange.css",
-                "theme-deep-purple.css",
-                "theme-green.css",
-                "theme-indigo.css",
-                "theme-light-blue.css",
-                "theme-light-green.css",
-                "theme-lime.css",
-                "theme-orange.css",
-                "theme-pink.css",
-                "theme-purple.css",
-                "theme-teal.css",
-                "theme-yellow.css"
-            ];
-			async function get_invoice(params){
-			    params.phone_number = $('#phoneNumber').val();
+			
+			function number_format(x) {
+				x = x.toString();
+				var pattern = /(-?\d+)(\d{3})/;
+				while (pattern.test(x))
+					x = x.replace(pattern, "$1,$2");
+				return x;
+			}
+
+			async function get_info(params){
 				return new Promise(resolve => {
 					$.ajax({
-						url: api_url + '/payment/get_invoice',
+						url: api_url + '/router/get_info',
 						type: 'POST',
-						data: params,
+						data: JSON.stringify(params),
+						success: (info) => {
+							resolve(info);
+						},error: (err) => {
+							resolve(err);
+						}
+					});
+				});
+			}
+
+			async function get_invoice(params){
+			    params.phone = $('#phoneNumber').val();
+				return new Promise(resolve => {
+					$.ajax({
+						url: api_url + '/router/get_invoice',
+						type: 'POST',
+						data: JSON.stringify(params),
 						success: (result) => { resolve(result); },
 						error: (e) => { resolve(e); }
 					});
@@ -77,12 +79,14 @@
 			}
 			
 			$(document).ready((e) => {
-			    var theme = `assets/css/${color[config.color]}`;
-                $('#theme').attr('href', theme);
 				var params = {
-					id:config.router_id,
-					apiKey:config.api_key
+					user_id: config.user_id,
+					router_id: config.router_id
 				}
+
+				get_info(params).then(result => {
+					$('#theme').attr('href', 'assets/css/' + result.color);
+				});
 				
 				$('#btnCheck').on('click', function(){
 				    $('#transaction').html('');
@@ -93,6 +97,7 @@
 					
 					if($('#phoneNumber').val() == ''){
 					    alert('Masukan nomor telepon anda.');
+						$('#frmCheck').removeClass('hide');
 					}else{
     				    get_invoice(params).then(invoice => {
     				        console.log(invoice);
@@ -100,12 +105,12 @@
     					    $.each(loader, (x,r) => {
     					        loader[x].classList.add('hide');
     				        });
-    				        if(invoice.length > 0){
+    				        if(invoice){
     				            $.each(invoice, (x,r) => {
     				                var link = '';
     				                switch(r.status){
     				                    case "success": link = `<a class="right button small padding-small round green">Lunas</a>`; break;
-    				                    case "pending": link = `<a class="right button small padding-small round amber" href="${r.paymentUrl}">Bayar</a>`; break;
+    				                    case "pending": link = `<a class="right button small padding-small round amber" href="${r.payment_url}">Bayar</a>`; break;
     				                }
     				                $('#transaction').prepend(`
     				                    <tr>
@@ -121,7 +126,7 @@
     				                            <span class="text-theme">Kode Voucher</span><br>
     				                            <b class="text-gray">${r.voucher}</b><br><br>
     				                            <span class="text-theme">Harga</span><br>
-    				                            <span class="text-gray">${r.amount}</span><br><br>
+    				                            <span class="text-gray">${number_format(r.product_price)}</span><br><br>
     				                        </td>
     				                    </tr>
     				                `);

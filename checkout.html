@@ -22,7 +22,6 @@
 	</head>
 	<body class="light-gray card">
 		<script type="text/javascript" src="assets/js/jquery.min.js"></script>
-		<script type="text/javascript" src="md5.js"></script>
 		<script type="text/javascript" src="config.js"></script>
 		<div class="bar theme"><a href="login.html" class="bar-item button"><i class="fa fa-arrow-left"></i> Kembali</a></div>
 		<div class="padding-small margin-top">
@@ -46,9 +45,11 @@
 					<input type="number" id="phoneNumber" class="input border round margin-bottom padding-small">
 					
 					<p align="center" class="loader"><i class="fa fa-refresh spin"></i> <span id="status">Loading product details..</span></p>
-					<div id="frmCheckout" class="hide">
+					<div id="payment" class="hide">
 						<span class="text-theme">Metode Pembayaran</span>
 						<select id="paymentMethod" class="input border round margin-bottom padding-small"></select>
+					</div>
+					<div id="frmCheckout" class="">
 						<button id="btnCheckout" class="button border border-theme theme round margin-bottom block">Bayar Sekarang</button>
 					</div>
 				</div>
@@ -57,46 +58,49 @@
 		<script type="text/javascript">
 			var api_url = config.api_url;
 			var loader = document.getElementsByClassName('loader');
-			var color = [
-                "theme-amber.css",
-                "theme-black.css",
-                "theme-red.css",
-                "theme-blue-grey.css",
-                "theme-blue.css",
-                "theme-cyan.css",
-                "theme-dark-grey.css",
-                "theme-deep-orange.css",
-                "theme-deep-purple.css",
-                "theme-green.css",
-                "theme-indigo.css",
-                "theme-light-blue.css",
-                "theme-light-green.css",
-                "theme-lime.css",
-                "theme-orange.css",
-                "theme-pink.css",
-                "theme-purple.css",
-                "theme-teal.css",
-                "theme-yellow.css"
-            ];
+			
+			function number_format(x) {
+				x = x.toString();
+				var pattern = /(-?\d+)(\d{3})/;
+				while (pattern.test(x))
+					x = x.replace(pattern, "$1,$2");
+				return x;
+			}
+
+			async function get_info(params){
+				return new Promise(resolve => {
+					$.ajax({
+						url: api_url + '/router/get_info',
+						type: 'POST',
+						data: JSON.stringify(params),
+						success: (info) => {
+							resolve(info);
+						},error: (err) => {
+							resolve(err);
+						}
+					});
+				});
+			}
 			async function get_product(params){
 				return new Promise(resolve => {
 					$.ajax({
-						url: api_url + '/product/get',
+						url: api_url + '/router/get_product',
 						type: 'POST',
-						data: params,
+						data: JSON.stringify(params),
 						success: (result) => { resolve(result); },
 						error: (e) => { resolve(e); }
 					});
 				});
 			}
-			async function get_payment_channel(params){
-				params.merchant_code = config.merchant_code;
-				params.merchant_key = config.merchant_api_key;
+
+			async function load_payment_menthod(params){
+				params.user_id = config.user_id;
+				params.router_id = config.router_id;
 				return new Promise(resolve => {
 					$.ajax({
-						url: api_url + '/payment/channel',
+						url: api_url + '/router/get_payment_method',
 						type: 'POST',
-						data: params,
+						data: JSON.stringify(params),
 						success: (result) => { resolve(result); },
 						error: (e) => { resolve(e); }
 					});
@@ -106,9 +110,9 @@
 			async function create_invoice(params){
 				return new Promise(resolve => {
 					$.ajax({
-						url: api_url + '/payment/create_invoice',
+						url: api_url + '/router/create_invoice',
 						type: "POST",
-						data: params,
+						data: JSON.stringify(params),
 						success: (invoice) => {
 							resolve(invoice);
 						},
@@ -119,12 +123,36 @@
 				});
 			}
 			$(document).ready((e) => {
-			    var theme = `assets/css/${color[config.color]}`;
-                $('#theme').attr('href', theme);
 				var params = {
-					id:config.router_id,
-					apiKey:config.api_key
+					user_id: config.user_id,
+					router_id: config.router_id
 				}
+				get_info(params).then(info => {
+					$('#theme').attr('href', 'assets/css/' + info.color);
+					if(info.payment_provider == 'duitku'){
+						$('#payment').removeClass('hide');
+						$('#frmCheckout').addClass('hide');
+						load_payment_menthod(params).then(channel => {
+							
+							$.each(channel, (index, row) => {
+								$('#paymentMethod').append(`<option value="${row.paymentMethod}">${row.paymentName}</option>`);
+							});
+
+							$('#frmCheckout').removeClass('hide');
+							$.each(loader, (x,r) => {
+								loader[x].classList.add('hide');
+							});
+							console.log(channel);
+						});
+					}else{
+						
+						$('#frmCheckout').removeClass('hide');
+						$.each(loader, (x,r) => {
+							loader[x].classList.add('hide');
+						});
+					}
+				});
+
 				var url = new URL(window.location.href);
 				params.product_id = url.searchParams.get('product_id');
 				
@@ -134,16 +162,6 @@
 					$('#product_name').html(product[0].product_name);
 					$('#product_price').html(product[0].product_price);
 					$('#status').html('Loading payment channel..');
-					get_payment_channel(params).then(channel => {
-						$.each(channel, (index, row) => {
-							$('#paymentMethod').append(`<option value="${row.paymentMethod}">${row.paymentName}</option>`);
-						});
-						$('#frmCheckout').removeClass('hide');
-						$.each(loader, (x,r) => {
-						    loader[x].classList.add('hide');
-						});
-						console.log(channel);
-					});
 				});
 
 				$('#btnCheckout').on('click', function(){
@@ -153,22 +171,24 @@
 				    });
 				    $('#frmCheckout').addClass('hide');
 					$(this).hide();
-					params.fonnte_token = config.fonnte_token;
+					
 					params.payment_method = $('#paymentMethod').val();
-					params.customer_name = $('#customerName').val();
-					params.phone_number = $('#phoneNumber').val();
+					params.first_name = $('#customerName').val();
+					params.last_name = 'User';
+					params.phone = $('#phoneNumber').val();
+					params.email = 'admin@niceportal.web.id';
 					params.return_url = "$(link-login-only)";
 					create_invoice(params).then(invoice => {
 						$(this).show();
 						console.log(invoice);
-						if(!invoice.paymentUrl){
+						if(!invoice.payment_url){
 							alert('Terjadi kesalahan, Silahkan ulangi lagi atau gunakan metode pembayaran yang lain.');
 							$.each(loader, (x,r) => {
 							    loader[x].classList.add('hide');
 							});
 							$('#frmCheckout').removeClass('hide');
 						}else{
-							window.location.href = invoice.paymentUrl;
+							window.location.href = invoice.payment_url;
 						}
 					});
 					console.log(params);
