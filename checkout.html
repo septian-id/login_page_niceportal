@@ -1,0 +1,179 @@
+<html>
+	<head>
+		<title>$(identity)</title>
+		<link rel="icon" type="image/x-icon" href="favicon.ico">
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+		<link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-green.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/ubuntu.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+		<style type="text/css">
+			*{outline: none; text-decoration: none; font-family: 'Ubuntu';}
+			html{
+				background: #CCC;
+			}
+			body{
+				margin: auto;
+				padding: 0px;
+				max-width: 480px;
+				min-height: 100vh;
+			}
+		</style>
+	</head>
+	<body class="light-gray card">
+		<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+		<script type="text/javascript" src="md5.js"></script>
+		<script type="text/javascript" src="config.js"></script>
+		<div class="bar theme"><a href="login.html" class="bar-item button"><i class="fa fa-arrow-left"></i> Kembali</a></div>
+		<div class="padding-small margin-top">
+			<div class="white">
+				<div class="padding-small margin-bottom">
+					<span class="text-theme">Produk ID</span><br>
+					<span class="text-gray" id="product_id"></span>
+				</div>
+				<div class="padding-small margin-bottom">
+					<span class="text-theme">Nama Produk</span><br>
+					<span class="text-gray" id="product_name"></span>
+				</div>
+				<div class="padding-small margin-bottom">
+					<span class="text-theme">Harga</span><br>
+					<span class="text-gray" id="product_price"></span>
+				</div>
+				<div class="padding-small margin-bottom">
+					<span class="text-theme">Nama Lengkap</span>
+					<input id="customerName" class="input border round padding-small margin-bottom">
+					<span class="text-theme">Nomor Telepon</span>
+					<input type="number" id="phoneNumber" class="input border round margin-bottom padding-small">
+					
+					<p align="center" class="loader"><i class="fa fa-refresh spin"></i> <span id="status">Loading product details..</span></p>
+					<div id="frmCheckout" class="hide">
+						<span class="text-theme">Metode Pembayaran</span>
+						<select id="paymentMethod" class="input border round margin-bottom padding-small"></select>
+						<button id="btnCheckout" class="button border border-theme theme round margin-bottom block">Bayar Sekarang</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var api_url = config.api_url;
+			var loader = document.getElementsByClassName('loader');
+			var color = [
+                "theme-amber.css",
+                "theme-black.css",
+                "theme-red.css",
+                "theme-blue-grey.css",
+                "theme-blue.css",
+                "theme-cyan.css",
+                "theme-dark-grey.css",
+                "theme-deep-orange.css",
+                "theme-deep-purple.css",
+                "theme-green.css",
+                "theme-indigo.css",
+                "theme-light-blue.css",
+                "theme-light-green.css",
+                "theme-lime.css",
+                "theme-orange.css",
+                "theme-pink.css",
+                "theme-purple.css",
+                "theme-teal.css",
+                "theme-yellow.css"
+            ];
+			async function get_product(params){
+				return new Promise(resolve => {
+					$.ajax({
+						url: api_url + '/product/get',
+						type: 'POST',
+						data: params,
+						success: (result) => { resolve(result); },
+						error: (e) => { resolve(e); }
+					});
+				});
+			}
+			async function get_payment_channel(params){
+				params.merchant_code = config.merchant_code;
+				params.merchant_key = config.merchant_api_key;
+				return new Promise(resolve => {
+					$.ajax({
+						url: api_url + '/payment/channel',
+						type: 'POST',
+						data: params,
+						success: (result) => { resolve(result); },
+						error: (e) => { resolve(e); }
+					});
+				});
+			};
+
+			async function create_invoice(params){
+				return new Promise(resolve => {
+					$.ajax({
+						url: api_url + '/payment/create_invoice',
+						type: "POST",
+						data: params,
+						success: (invoice) => {
+							resolve(invoice);
+						},
+						error: (e) => {
+							resolve(e);
+						}
+					});
+				});
+			}
+			$(document).ready((e) => {
+			    var theme = `assets/css/${color[config.color]}`;
+                $('#theme').attr('href', theme);
+				var params = {
+					id:config.router_id,
+					apiKey:config.api_key
+				}
+				var url = new URL(window.location.href);
+				params.product_id = url.searchParams.get('product_id');
+				
+				get_product(params).then(product => {
+					console.log(product);
+					$('#product_id').html(product[0].product_id);
+					$('#product_name').html(product[0].product_name);
+					$('#product_price').html(product[0].product_price);
+					$('#status').html('Loading payment channel..');
+					get_payment_channel(params).then(channel => {
+						$.each(channel, (index, row) => {
+							$('#paymentMethod').append(`<option value="${row.paymentMethod}">${row.paymentName}</option>`);
+						});
+						$('#frmCheckout').removeClass('hide');
+						$.each(loader, (x,r) => {
+						    loader[x].classList.add('hide');
+						});
+						console.log(channel);
+					});
+				});
+
+				$('#btnCheckout').on('click', function(){
+				    $.each(loader, (x,r) => {
+				        loader[x].classList.remove('hide');
+				        $('#status').html('Creating orders..');
+				    });
+				    $('#frmCheckout').addClass('hide');
+					$(this).hide();
+					params.fonnte_token = config.fonnte_token;
+					params.payment_method = $('#paymentMethod').val();
+					params.customer_name = $('#customerName').val();
+					params.phone_number = $('#phoneNumber').val();
+					params.return_url = "$(link-login-only)";
+					create_invoice(params).then(invoice => {
+						$(this).show();
+						console.log(invoice);
+						if(!invoice.paymentUrl){
+							alert('Terjadi kesalahan, Silahkan ulangi lagi atau gunakan metode pembayaran yang lain.');
+							$.each(loader, (x,r) => {
+							    loader[x].classList.add('hide');
+							});
+							$('#frmCheckout').removeClass('hide');
+						}else{
+							window.location.href = invoice.paymentUrl;
+						}
+					});
+					console.log(params);
+				});
+			});
+		</script>
+	</body>
+</html>

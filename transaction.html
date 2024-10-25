@@ -1,0 +1,138 @@
+<html>
+	<head>
+		<title>$(identity)</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no">
+		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+		<link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-green.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/ubuntu.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+		<style type="text/css">
+			*{outline: none; text-decoration: none; font-family: 'Ubuntu';}
+			html{
+				background: #CCC;
+			}
+			body{
+				margin: auto;
+				padding: 0px;
+				max-width: 480px;
+				min-height: 100vh;
+			}
+		</style>
+	</head>
+	<body class="light-gray card">
+		<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+		<script type="text/javascript" src="md5.js"></script>
+		<script type="text/javascript" src="config.js"></script>
+		<div class="bar theme"><a href="login.html" class="bar-item button"><i class="fa fa-arrow-left"></i> Kembali</a></div>
+		<div class="padding-small margin-top">
+			<div class="white">
+
+				<div class="padding-small margin-bottom">
+					<span class="text-theme">Nomor Telepon</span>
+					<input type="number" id="phoneNumber" class="input border round margin-bottom padding-small">
+					
+					<p align="center" class="loader hide"><i class="fa fa-refresh spin"></i> <span id="status">Loading invoice data..</span></p>
+					<div id="frmCheck">
+						<button id="btnCheck" class="button border border-theme theme round margin-bottom block">Check Transaksi</button>
+					</div>
+					<table id="transaction" class="table-all small"></table>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var api_url = config.api_url;
+			var loader = document.getElementsByClassName('loader');
+			var color = [
+                "theme-amber.css",
+                "theme-black.css",
+                "theme-red.css",
+                "theme-blue-grey.css",
+                "theme-blue.css",
+                "theme-cyan.css",
+                "theme-dark-grey.css",
+                "theme-deep-orange.css",
+                "theme-deep-purple.css",
+                "theme-green.css",
+                "theme-indigo.css",
+                "theme-light-blue.css",
+                "theme-light-green.css",
+                "theme-lime.css",
+                "theme-orange.css",
+                "theme-pink.css",
+                "theme-purple.css",
+                "theme-teal.css",
+                "theme-yellow.css"
+            ];
+			async function get_invoice(params){
+			    params.phone_number = $('#phoneNumber').val();
+				return new Promise(resolve => {
+					$.ajax({
+						url: api_url + '/payment/get_invoice',
+						type: 'POST',
+						data: params,
+						success: (result) => { resolve(result); },
+						error: (e) => { resolve(e); }
+					});
+				});
+			}
+			
+			$(document).ready((e) => {
+			    var theme = `assets/css/${color[config.color]}`;
+                $('#theme').attr('href', theme);
+				var params = {
+					id:config.router_id,
+					apiKey:config.api_key
+				}
+				
+				$('#btnCheck').on('click', function(){
+				    $('#transaction').html('');
+				    $.each(loader, (x,r) => {
+				        loader[x].classList.remove('hide');
+				    });
+				    $('#frmCheck').addClass('hide');
+					
+					if($('#phoneNumber').val() == ''){
+					    alert('Masukan nomor telepon anda.');
+					}else{
+    				    get_invoice(params).then(invoice => {
+    				        console.log(invoice);
+    				        $('#frmCheck').removeClass('hide');
+    					    $.each(loader, (x,r) => {
+    					        loader[x].classList.add('hide');
+    				        });
+    				        if(invoice.length > 0){
+    				            $.each(invoice, (x,r) => {
+    				                var link = '';
+    				                switch(r.status){
+    				                    case "success": link = `<a class="right button small padding-small round green">Lunas</a>`; break;
+    				                    case "pending": link = `<a class="right button small padding-small round amber" href="${r.paymentUrl}">Bayar</a>`; break;
+    				                }
+    				                $('#transaction').prepend(`
+    				                    <tr>
+    				                        <td style="vertical-align: middle;width:0">
+    				                            <i class="fa fa-qrcode fa-2x text-gray"></i>
+    				                        </td>
+    				                        <td>
+    				                            ${link}
+    				                            <span class="text-theme">Tanggal</span><br>
+    				                            <span class="text-gray">${r.year}/${r.month}/${r.days} ${r.time}</span><br><br>
+    				                            <span class="text-theme">Nama Item</span><br>
+    				                            <span class="text-gray">${r.product_name}</span><br><br>
+    				                            <span class="text-theme">Kode Voucher</span><br>
+    				                            <b class="text-gray">${r.voucher}</b><br><br>
+    				                            <span class="text-theme">Harga</span><br>
+    				                            <span class="text-gray">${r.amount}</span><br><br>
+    				                        </td>
+    				                    </tr>
+    				                `);
+    				            });
+    				        }else{
+    				            alert('Belum ada riwayat transaksi.')
+    				        }
+    				    });
+					}
+				});
+			});
+		</script>
+	</body>
+</html>

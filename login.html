@@ -1,0 +1,325 @@
+<html>
+<head>
+    <title>$(identity)</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-green.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/ubuntu.css">
+    <style type="text/css">
+        * {
+            font-family: 'Ubuntu';
+            outline: none;
+            text-decoration: none;
+        }
+        body {
+            margin: auto;
+            max-width: 480px;
+        }
+        .header {
+            min-height: 100px;
+            /*border-bottom-left-radius: 20px;
+                border-bottom-right-radius: 20px;*/
+        }
+        .navbar {
+            width: 95%;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        .nav {
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 10px 10px 10px 0px;
+        }
+
+        .footer {
+            min-height: 60px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        .input {
+            font-weight: 900;
+        }
+        .alert{
+            min-width: 300px;
+            max-width:300px;
+            min-height: 200px;
+            border: 1px solid red;
+            text-align: center;
+            align-content: center;
+            border-radius:10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hide">
+        $(if chap-id)
+        <form name="sendin" action="$(link-login-only)" method="post">
+            <input type="hidden" name="username" />
+            <input type="hidden" name="password" />
+            <input type="hidden" name="dst" value="$(link-orig)" />
+            <input type="hidden" name="popup" value="true" />
+        </form>
+
+        <script type="text/javascript" src="assets/js/md5.js"></script>
+        <script type="text/javascript">
+            function doLogin() {
+                if (config.clear_session == true) {
+                    $.ajax({
+                        url: config.api_url + '/session/clear',
+                        type: 'POST',
+                        data: {
+                            apiKey: config.api_key,
+                            id: config.router_id,
+                            username: document.login.username.value
+                        },
+                        success: (result) => {
+                            console.log(result);
+                            document.sendin.username.value = document.login.username.value;
+                            document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+                            document.sendin.submit();
+                        },
+                        error: (err) => {
+                            console.log(err);
+                            document.sendin.username.value = document.login.username.value;
+                            document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+                            document.sendin.submit();
+                        }
+                    });
+                    return false;
+                } else {
+                    document.sendin.username.value = document.login.username.value;
+                    document.sendin.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+                    document.sendin.submit();
+                    return false;
+                }
+            }
+        </script>
+        $(endif)
+    </div>
+    <div class="header display-container theme">
+        <div class="navbar padding display-bottommiddle white border-top border-left border-right">
+            <table class="table">
+                <tr>
+                    <td style="vertical-align:middle; width:30px">
+                        <i class="fa fa-wifi fa-2x text-theme"></i>
+                    </td>
+                    <td class="small">
+                        <b class="text-theme">$(identity)</b><br>
+                        <span class="text-gray">Selamat datang di jaringan $(identity)</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="padding-small text-gray margin-bottom">
+        <div class="nav small border-left border-bottom border-right">
+            <div class="row">
+                <div class="col s3 center margin-top margin-bottom" onclick="login_mode('voucher')">
+                    <a class="round">
+                        <i class="fa fa-ticket fa-2x text-theme"></i><br>Voucher
+                    </a>
+                </div>
+                <div class="col s3 center margin-top margin-bottom" onclick="login_mode('member')">
+                    <a class="round">
+                        <i class="fa fa-user fa-2x text-theme"></i><br>Member
+                    </a>
+                </div>
+                <div class="col s3 center margin-top margin-bottom" onclick="window.location.replace('transaction.html')">
+                    <a class="round">
+                        <i class="fa fa-table fa-2x text-theme"></i><br>Transaksi
+                    </a>
+                </div>
+                <div class="col s3 center margin-top margin-bottom" onclick="window.open(config.contact)">
+                    <a class="round">
+                        <i class="fa fa-whatsapp fa-2x text-theme"></i><br>Kontak
+                    </a>
+                </div>
+            </div>
+            <div class="padding-small margin-bottom">
+                <form name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()" $(endif)>
+                    <input type="hidden" name="dst" value="$(link-orig)" />
+                    <input type="hidden" name="popup" value="true" />
+
+                    <input type="text" id="username" name="username" class="input theme-l5 border round margin-bottom" placeholder="Kode Voucher" required>
+                    <input type="hidden" id="password" name="password" class="input theme-l5 border round margin-bottom" placeholder="Password" required>
+                    <button class="input block theme round" onclick="if($('#username').val() !==''){$(this).html('Please wait..')}">Masuk</button>
+                </form>
+            </div>
+
+            <div class="margin-bottom">
+                <p align="center" class="loader">
+                    <i class="fa fa-refresh spin"></i> Loading products..
+                </p>
+                <table id="product_list" class="table small"></table>
+            </div>
+            <div class="padding-small">
+            <div id="slideShow" class="content display-container margin-bottom" style="max-width:800px">
+                <img class="mySlides" src="assets/images/slide1.jpg" style="width:100%">
+                <img class="mySlides" src="assets/images/slide2.jpg" style="width:100%">
+                <img class="mySlides" src="assets/images/slide3.jpg" style="width:100%">
+                <div class="center container section large text-white display-bottommiddle" style="width:100%">
+                    <div class="left hover-text-theme" onclick="plusDivs(-1)">
+                        &#10094;
+                    </div>
+                    <div class="right hover-text-theme" onclick="plusDivs(1)">
+                        &#10095;
+                    </div>
+                    <span class="badge demo border transparent hover-white" onclick="currentDiv(1)"></span>
+                    <span class="badge demo border transparent hover-white" onclick="currentDiv(2)"></span>
+                    <span class="badge demo border transparent hover-white" onclick="currentDiv(3)"></span>
+                </div>
+            </div>
+            </div>
+            <script type="text/javascript">
+                var slideIndex = 1;
+                function plusDivs(n) {
+                    showDivs(slideIndex += n);
+                }
+                function currentDiv(n) {
+                    showDivs(slideIndex = n);
+                }
+                function showDivs(n) {
+                    var i;
+                    var x = document.getElementsByClassName("mySlides");
+                    var dots = document.getElementsByClassName("demo");
+                    if (n > x.length) {
+                        slideIndex = 1
+                    }
+                    if (n < 1) {
+                        slideIndex = x.length
+                    }
+                    for (i = 0; i < x.length; i++) {
+                        x[i].style.display = "none";
+                    }
+                    for (i = 0; i < dots.length; i++) {
+                        dots[i].className = dots[i].className.replace(" white", "");
+                    }
+                    x[slideIndex-1].style.display = "block";
+                    dots[slideIndex-1].className += " white";
+                }
+                showDivs(slideIndex);
+                setInterval(function() {
+                    plusDivs(1);
+                }, 6000);
+            </script>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="config.js"></script>
+<script type="text/javascript">
+    var username = document.getElementById('username');
+    var password = document.getElementById('password');
+    var loader = document.getElementsByClassName('loader');
+    var api_url = config.api_url;
+    var color = [
+        "theme-amber.css",
+        "theme-black.css",
+        "theme-red.css",
+        "theme-blue-grey.css",
+        "theme-blue.css",
+        "theme-cyan.css",
+        "theme-dark-grey.css",
+        "theme-deep-orange.css",
+        "theme-deep-purple.css",
+        "theme-green.css",
+        "theme-indigo.css",
+        "theme-light-blue.css",
+        "theme-light-green.css",
+        "theme-lime.css",
+        "theme-orange.css",
+        "theme-pink.css",
+        "theme-purple.css",
+        "theme-teal.css",
+        "theme-yellow.css"
+    ];
+    var params = {
+        apiKey: config.api_key,
+        id: config.router_id
+    }
+    function update_password() {
+        username.value = username.value;
+        password.value = username.value;
+    }
+    username.onkeyup = update_password;
+    username.onchange = update_password;
+
+    function login_mode(mode) {
+        username.value = '';
+        password.value = '';
+        switch (mode) {
+            case "voucher":
+                username.onkeyup = update_password;
+                username.onchange = update_password;
+                username.placeholder = 'Kode Voucher';
+                password.type = 'hidden';
+                break;
+            case "member":
+                username.onkeyup = '';
+                username.onchange = '';
+                username.placeholder = 'Username';
+                password.type = 'password';
+                break;
+        }
+    }
+
+
+    async function get_product() {
+        return new Promise(resolve => {
+            $.ajax({
+                url: api_url + '/product/get',
+                type: 'POST',
+                data: params,
+                success: (product) => {
+                    $.each(product, (x, r) => {
+                        $('#product_list').append(`
+                            <tr>
+                            <td style="vertical-align: middle;width:0"><i class="fa fa-qrcode fa-2x text-gray"></i></td>
+                            <td class="text-gray">
+                            <b class="text-theme">${r.product_name}</b><br>
+                            <span class="text-gray">${config.currency} ${r.product_price}</span>
+                            </td>
+                            <td style="vertical-align: middle; text-align: right">
+                            <a href="checkout.html?product_id=${r.product_id}" class="button theme round"><i class="fa fa-shopping-cart"></i> Beli</a>
+                            </td>
+                            </tr>
+                            `);
+                    });
+                    $.each(loader, (x, r) => {
+                        loader[x].classList.add('hide');
+                    });
+                    resolve(product);
+                }
+            });
+    });
+}
+
+$(document).ready((evt)=> {
+    var theme = `assets/css/${color[config.color]}`;
+    $('#theme').attr('href', theme);
+
+    get_product().then(result => {
+        console.log(result);
+});
+});
+</script>
+<div class="hide">
+    $(if error)
+    <script type="text/javascript">
+        $('body').append(`
+            <div id="alert" class="alert display-middle pale-red padding-small">
+                <p align="center"><b class="text-red">Login Gagal</b></p>
+                <p align="center">$(error)</p>
+                <button class="button red round" onclick="$('#alert').remove()">Close</button>
+            </div>
+        `);
+        setTimeout(function(){
+            $('#alert').remove();
+        },6000);
+    </script>
+    $(endif)
+</div>
+</body>
+</html>
