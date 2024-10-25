@@ -28,7 +28,7 @@ add action=accept disabled=no comment="NICEPORTAL" dst-host="niceportal.web.id";
 add action=accept disabled=no comment="API" dst-host="desktop.niceradius.com";
 add action=accept disabled=no comment="DUITKU" dst-host="duitku.com";
 ```
-(Optional) Bypass Payment Gateway Midtrans
+### (Optional) Bypass Payment Gateway Midtrans
 ```js
 /ip hotspot walled-garden ip
 add action=accept disabled=no comment="MIDTRANS" dst-host="midtrans.com";
@@ -38,6 +38,21 @@ add action=accept disabled=no comment="MIDTRANS" dst-host="cloudfront.net";
 add action=accept disabled=no comment="MIDTRANS" dst-host="d2f3dnusg0rbp7.cloudfront.net";
 add action=accept disabled=no comment="MIDTRANS" dst-host="bam.nr-data.net";
 add action=accept disabled=no comment="MIDTRANS" dst-host="snap-web-raccoon-integration.gojekapi.com";
+```
+### (Optional) Bypass Metode Pembayaran DANA :
+```js
+/ip hotspot walled-garden ip
+add action=accept disabled=no comment="DANA" dst-host="m.dana.id";
+add action=accept disabled=no comment="DANA" dst-host="dana.id";
+add action=accept disabled=no comment="DANA" dst-host="split.io";
+add action=accept disabled=no comment="DANA" dst-host="sdk.split.io";
+add action=accept disabled=no comment="DANA" dst-host="auth.split.io";
+add action=accept disabled=no comment="DANA" dst-host="events.split.io";
+add action=accept disabled=no comment="DANA" dst-host="a.m.dana.id";
+add action=accept disabled=no comment="DANA" dst-host="mas-log1.saas.dana.id";
+add action=accept disabled=no comment="DANA" dst-host="api-js.mixpanel.com";
+add action=accept disabled=no comment="DANA" dst-host="captcha.saas.dana.id";
+add action=accept disabled=no comment="DANA" dst-host="dana-assets-id.oss-ap-southeast-5.aliyuncs.com";
 ```
 
 ### PILIHAN WARNA
@@ -60,20 +75,3 @@ add action=accept disabled=no comment="MIDTRANS" dst-host="snap-web-raccoon-inte
 - ![#9c27b0](https://placehold.co/15x15/9c27b0/9c27b0.png) `16 - Purple`
 - ![#009688](https://placehold.co/15x15/009688/009688.png) `17 - Teal`
 - ![#ffeb3b](https://placehold.co/15x15/ffeb3b/ffeb3b.png) `18 - Yellow`
-
-
-### (Optional) Bypass Metode Pembayaran DANA :
-```js
-/ip hotspot walled-garden ip
-add action=accept disabled=no comment="DANA" dst-host="m.dana.id";
-add action=accept disabled=no comment="DANA" dst-host="dana.id";
-add action=accept disabled=no comment="DANA" dst-host="split.io";
-add action=accept disabled=no comment="DANA" dst-host="sdk.split.io";
-add action=accept disabled=no comment="DANA" dst-host="auth.split.io";
-add action=accept disabled=no comment="DANA" dst-host="events.split.io";
-add action=accept disabled=no comment="DANA" dst-host="a.m.dana.id";
-add action=accept disabled=no comment="DANA" dst-host="mas-log1.saas.dana.id";
-add action=accept disabled=no comment="DANA" dst-host="api-js.mixpanel.com";
-add action=accept disabled=no comment="DANA" dst-host="captcha.saas.dana.id";
-add action=accept disabled=no comment="DANA" dst-host="dana-assets-id.oss-ap-southeast-5.aliyuncs.com";
-```
