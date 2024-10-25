@@ -165,33 +165,37 @@
 				});
 
 				$('#btnCheckout').on('click', function(){
-				    $.each(loader, (x,r) => {
-				        loader[x].classList.remove('hide');
-				        $('#status').html('Creating orders..');
-				    });
-				    $('#frmCheckout').addClass('hide');
-					$(this).hide();
-					
-					params.payment_method = $('#paymentMethod').val();
-					params.first_name = $('#customerName').val();
-					params.last_name = 'User';
-					params.phone = $('#phoneNumber').val();
-					params.email = 'admin@niceportal.web.id';
-					params.return_url = "$(link-login-only)";
-					create_invoice(params).then(invoice => {
-						$(this).show();
-						console.log(invoice);
-						if(!invoice.payment_url){
-							alert('Terjadi kesalahan, Silahkan ulangi lagi atau gunakan metode pembayaran yang lain.');
-							$.each(loader, (x,r) => {
-							    loader[x].classList.add('hide');
-							});
-							$('#frmCheckout').removeClass('hide');
-						}else{
-							window.location.href = invoice.payment_url;
-						}
-					});
-					console.log(params);
+				    if($('#phoneNumber').val() == '' || $('#customerName').val() == ''){
+				        $('#customerName').focus();
+				    }else{
+    				    $.each(loader, (x,r) => {
+    				        loader[x].classList.remove('hide');
+    				        $('#status').html('Creating orders..');
+    				    });
+    				    $('#frmCheckout').addClass('hide');
+    					$(this).hide();
+    					
+    					params.payment_method = $('#paymentMethod').val();
+    					params.first_name = $('#customerName').val();
+    					params.last_name = 'User';
+    					params.phone = $('#phoneNumber').val();
+    					params.email = 'admin@niceportal.web.id';
+    					params.return_url = "$(link-login-only)";
+    					create_invoice(params).then(invoice => {
+    						$(this).show();
+    						console.log(invoice);
+    						if(!invoice.payment_url){
+    							alert('Terjadi kesalahan, Silahkan ulangi lagi atau gunakan metode pembayaran yang lain.');
+    							$.each(loader, (x,r) => {
+    							    loader[x].classList.add('hide');
+    							});
+    							$('#frmCheckout').removeClass('hide');
+    						}else{
+    							window.location.href = invoice.payment_url;
+    						}
+    					});
+    					console.log(params);
+				    }
 				});
 			});
 		</script>
