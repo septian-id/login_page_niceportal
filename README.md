@@ -28,6 +28,17 @@ add action=accept disabled=no dst-host="niceportal.web.id";
 add action=accept disabled=no dst-host="desktop.niceradius.com";
 add action=accept disabled=no dst-host="duitku.com";
 ```
+(Optional) Bypass Payment Gateway Midtrans
+```js
+/ip hotspot walled-garden ip
+add action=accept disabled=no comment="MIDTRANS" dst-host="midtrans.com";
+add action=accept disabled=no comment="MIDTRANS" dst-host="app.sandbox.midtrans.com";
+add action=accept disabled=no comment="MIDTRANS" dst-host="app.midtrans.com";
+add action=accept disabled=no comment="MIDTRANS" dst-host="cloudfront.net";
+add action=accept disabled=no comment="MIDTRANS" dst-host="d2f3dnusg0rbp7.cloudfront.net";
+add action=accept disabled=no comment="MIDTRANS" dst-host="bam.nr-data.net";
+add action=accept disabled=no comment="MIDTRANS" dst-host="snap-web-raccoon-integration.gojekapi.com";
+```
 
 ### PILIHAN WARNA
 - ![#ffc107](https://placehold.co/15x15/ffc107/ffc107.png) `0 - Amber`
