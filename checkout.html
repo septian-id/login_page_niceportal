@@ -4,7 +4,7 @@
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		<meta name="viewport" content="width=device-width, user-scalable=no">
 		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
-		<link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-green.css">
+		<link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-black.css">
 		<link rel="stylesheet" type="text/css" href="assets/css/ubuntu.css">
 		<link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
 		<style type="text/css">
@@ -133,7 +133,6 @@
 						$('#payment').removeClass('hide');
 						$('#frmCheckout').addClass('hide');
 						load_payment_menthod(params).then(channel => {
-							
 							$.each(channel, (index, row) => {
 								$('#paymentMethod').append(`<option value="${row.paymentMethod}">${row.paymentName}</option>`);
 							});
@@ -160,7 +159,7 @@
 					console.log(product);
 					$('#product_id').html(product[0].product_id);
 					$('#product_name').html(product[0].product_name);
-					$('#product_price').html(product[0].product_price);
+					$('#product_price').html(number_format(product[0].product_price));
 					$('#status').html('Loading payment channel..');
 				});
 
@@ -179,7 +178,6 @@
     					params.first_name = $('#customerName').val();
     					params.last_name = 'User';
     					params.phone = $('#phoneNumber').val();
-    					params.email = 'admin@niceportal.web.id';
     					params.return_url = "$(link-login-only)";
     					create_invoice(params).then(invoice => {
     						$(this).show();
