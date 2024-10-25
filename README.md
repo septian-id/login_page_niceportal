@@ -10,7 +10,6 @@
 Edit file config.js sebelum digunakan
 ```js
 var config = {
-clear_session       : true,
 api_url             : 'https://desktop.niceradius.com/api',
 user_id             : '',
 router_id           : '',
@@ -19,13 +18,8 @@ contact             : 'https://wa.me/6281234567890',
 ```
 | Variable  | Value |
 | ------------- | ------------- |
-| clear_session | true / false  |
-| api_key  | dari https://desktop.niceradius.com |
-| router_id  | dari https://desktop.niceradius.com |
-| merchant_code | dari https://duitku.com |
-| merchant_api_key | dari https://duitku.com |
-| fonnte_token | dari https://fonnte.com |
-| color  | 0 - 18 |
+| user_id  | dari https://niceportal.web.id |
+| router_id  | dari https://niceportal.web.id |
 
 ### (Required) Bypass Server URL : 
 ```js
