@@ -2,7 +2,7 @@
 ### FUTUR TERSEDIA :
 - Login Mode Voucher
 - Login Mode Member
-- Payment Gateway
+- Payment Gateway (Duitku & Midtrans)
 - Riwayat Transaksi
 - Auto Clear Active Session, Untuk mengatasi masalah random MAC Address yang sering menyebabkan gagal login.
 - Gambar Slide
