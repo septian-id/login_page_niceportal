@@ -3,9 +3,10 @@
 - Login Mode Voucher
 - Login Mode Member
 - Payment Gateway (Duitku & Midtrans)
-- Riwayat Transaksi
+- Cek Riwayat Transaksi
 - Auto Clear Active Session, Untuk mengatasi masalah random MAC Address yang sering menyebabkan gagal login.
 - Gambar Slide
+- Posting Pengumuman Ke Halaman Login
 
 Edit file config.js sebelum digunakan
 ```js
