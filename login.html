@@ -5,7 +5,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-black.css">
+    <link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-green.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/ubuntu.css">
     <style type="text/css">
@@ -167,7 +167,7 @@
                 </p>
                 <table id="product_list" class="table small"></table>
             </div>
-            <div class="padding-small">
+            <div class="padding-small margin-bottom">
                 <div id="slideShow" class="content display-container margin-bottom" style="max-width:800px">
                     <img class="mySlides" src="assets/images/slide1.jpg" style="width:100%">
                     <img class="mySlides" src="assets/images/slide2.jpg" style="width:100%">
@@ -185,6 +185,7 @@
                     </div>
                 </div>
             </div>
+            <div class="padding-small margin-bottom" id="notice"></div>
         </div>
     </div>
     </div>
@@ -279,6 +280,31 @@
             });
         }
 
+        async function get_notice(){
+            return new Promise(resolve => {
+                $.ajax({
+                    url: api_url + '/router/get_notice',
+                    type: 'POST',
+                    data: JSON.stringify(params),
+                    success: (notice) => {
+                        $.each(notice, (x,r) => {
+                            $('#notice').prepend(`
+                                <table class="table margin-bottom boder round card padding-small small">
+                                    <tr>
+                                        <td>
+                                            <span class="right text-gray small">${r.date}</span>
+                                            <b class="text-theme">${r.title}</b><br>
+                                            ${r.content}
+                                        </td>
+                                    </tr>
+                                </table>
+                            `);
+                        });
+                        resolve(notice);
+                    }
+                });
+            });
+        }
         $(document).ready((evt) => {
             get_info().then(result => {
                 $('title').html(result.name);
@@ -288,6 +314,9 @@
                 console.log(result);
             });
             get_product().then(result => {
+                console.log(result);
+            });
+            get_notice().then(result => {
                 console.log(result);
             });
         });
@@ -336,7 +365,7 @@
         `);
             setTimeout(function () {
                 $('#alert').remove();
-            }, 3000);
+            }, 1000);
         </script>
         $(endif)
     </div>
