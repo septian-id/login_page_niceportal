@@ -7,6 +7,7 @@
 - Cek Riwayat Transaksi
 - Auto Clear Active Session, Untuk mengatasi masalah random MAC Address yang sering menyebabkan gagal login.
 - Gambar Slide
+- Posting Gambar Ke Halaman Login
 - Posting Pengumuman Ke Halaman Login
 
 Edit file config.js sebelum digunakan
