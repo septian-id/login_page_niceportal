@@ -176,7 +176,7 @@
     					
     					params.payment_method = $('#paymentMethod').val();
     					params.first_name = $('#customerName').val();
-    					params.last_name = 'User';
+    					params.last_name = '';
     					params.phone = $('#phoneNumber').val();
     					params.return_url = "$(link-login-only)";
     					create_invoice(params).then(invoice => {
