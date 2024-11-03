@@ -169,9 +169,11 @@
             </div>
             <div class="padding-small margin-bottom">
                 <div id="slideShow" class="content display-container margin-bottom" style="max-width:800px">
-                    <img class="mySlides" src="assets/images/slide1.jpg" style="width:100%">
-                    <img class="mySlides" src="assets/images/slide2.jpg" style="width:100%">
-                    <img class="mySlides" src="assets/images/slide3.jpg" style="width:100%">
+                    <div id="slide">
+                        <img class="mySlides" src="assets/images/slide1.jpg" style="width:100%">
+                        <img class="mySlides" src="assets/images/slide2.jpg" style="width:100%">
+                        <img class="mySlides" src="assets/images/slide3.jpg" style="width:100%">
+                    </div>
                     <div class="center container section large text-white display-bottommiddle" style="width:100%">
                         <div class="left hover-text-theme" onclick="plusDivs(-1)">
                             &#10094;
@@ -305,6 +307,24 @@
                 });
             });
         }
+        async function get_images(){
+            return new Promise(resolve => {
+                $.ajax({
+                    url: api_url + '/router/get_images',
+                    type: 'POST',
+                    data: JSON.stringify(params),
+                    success: (images) => {
+                        if(images.length > 0){
+                            $('#slide').html('');
+                            $.each(images, (x,r) => {
+                                $('#slide').append(`<img class="mySlides" src="https://desktop.niceradius.com/app/view/v4/upload/${r.file_name}" style="width:100%;display:none">`);
+                            });
+                        }
+                        resolve(images);
+                    }
+                });
+            });
+        }
         $(document).ready((evt) => {
             get_info().then(result => {
                 $('title').html(result.name);
@@ -313,10 +333,14 @@
                 config.clear_session = result.auto_clear_session;
                 console.log(result);
             });
+
             get_product().then(result => {
                 console.log(result);
             });
             get_notice().then(result => {
+                console.log(result);
+            });
+            get_images().then(result => {
                 console.log(result);
             });
         });
