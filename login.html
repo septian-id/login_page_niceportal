@@ -165,7 +165,7 @@
                 <p align="center" class="loader">
                     <i class="fa fa-refresh spin"></i> Loading products..
                 </p>
-                <table id="product_list" class="table small"></table>
+                <div class="row" id="product_list"></div>
             </div>
             <div class="padding-small margin-bottom">
                 <div id="slideShow" class="content display-container margin-bottom" style="max-width:800px">
@@ -261,16 +261,20 @@
                     success: (product) => {
                         $.each(product, (x, r) => {
                             $('#product_list').append(`
-                            <tr>
-                            <td style="vertical-align: middle;width:0"><i class="fa fa-qrcode fa-2x text-gray"></i></td>
-                            <td class="text-gray">
-                            <b class="text-theme">${r.product_name}</b><br>
-                            <span class="text-gray">Rp ${number_format(r.product_price)}</span>
-                            </td>
-                            <td style="vertical-align: middle; text-align: right">
-                            <a href="checkout.html?product_id=${r.product_id}" class="button theme round"><i class="fa fa-shopping-cart"></i> Beli</a>
-                            </td>
-                            </tr>
+                            <div class="half">
+                            <table class="table small">
+                                <tr>
+                                <td style="vertical-align: middle;width:0"><i class="fa fa-qrcode fa-2x text-gray"></i></td>
+                                <td class="text-gray">
+                                <b class="text-theme">${r.product_name}</b><br>
+                                <span class="text-gray">Rp ${number_format(r.product_price)}</span>
+                                </td>
+                                <td style="vertical-align: middle; text-align: right">
+                                <a href="checkout.html?product_id=${r.product_id}" class="button theme round"><i class="fa fa-shopping-cart"></i> Beli</a>
+                                </td>
+                                </tr>
+                            </table>
+                            </div>
                             `);
                         });
                         $.each(loader, (x, r) => {
