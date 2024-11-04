@@ -261,10 +261,10 @@
                     success: (product) => {
                         $.each(product, (x, r) => {
                             $('#product_list').append(`
-                            <div class="half">
+                            <div class="col s6">
                             <table class="table small">
                                 <tr>
-                                <td style="vertical-align: middle;width:0"><i class="fa fa-qrcode fa-2x text-gray"></i></td>
+                                <!--<td style="vertical-align: middle;width:0"><i class="fa fa-qrcode fa-2x text-gray"></i></td>-->
                                 <td class="text-gray">
                                 <b class="text-theme">${r.product_name}</b><br>
                                 <span class="text-gray">Rp ${number_format(r.product_price)}</span>
