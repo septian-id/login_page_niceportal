@@ -27,29 +27,38 @@
 		<div class="padding-small margin-top">
 			<div class="white">
 				<div class="padding-small margin-bottom">
-					<span class="text-theme">Produk ID</span><br>
+					<span class="text-theme">ID Produk</span><br>
 					<span class="text-gray" id="product_id"></span>
 				</div>
+
 				<div class="padding-small margin-bottom">
 					<span class="text-theme">Nama Produk</span><br>
 					<span class="text-gray" id="product_name"></span>
 				</div>
+
+				<div class="padding-small margin-bottom">
+					<span class="text-theme">Deskripsi</span><br>
+					<span class="text-gray" id="description"></span>
+				</div>
+
 				<div class="padding-small margin-bottom">
 					<span class="text-theme">Harga</span><br>
-					<span class="text-gray" id="product_price"></span>
+					<b class="text-gray" id="product_price"></b>
 				</div>
 				<div class="padding-small margin-bottom">
 					<span class="text-theme">Nama Lengkap</span>
-					<input id="customerName" class="input border round padding-small margin-bottom">
+					<input id="customerName" class="input theme-l5 border round padding-small margin-bottom">
+
 					<span class="text-theme">Nomor Telepon</span>
-					<input type="number" id="phoneNumber" class="input border round margin-bottom padding-small">
+					<input type="number" id="phoneNumber" class="input theme-l5 border round margin-bottom padding-small">
 					
 					<p align="center" class="loader"><i class="fa fa-refresh spin"></i> <span id="status">Loading product details..</span></p>
 					<div id="payment" class="hide">
 						<span class="text-theme">Metode Pembayaran</span>
-						<select id="paymentMethod" class="input border round margin-bottom padding-small"></select>
+						<select id="paymentMethod" class="input theme-l5 border round margin-bottom padding-small"></select>
 					</div>
 					<div id="frmCheckout" class="">
+						<p class="text-gray light-gray padding-small small" align="center">Informasi transaksi akan terkirim otomatis melalui WhatsApp, Pastikan data yang anda masukan sudah sesuai.</p>
 						<button id="btnCheckout" class="button border border-theme theme round margin-bottom block">Bayar Sekarang</button>
 					</div>
 				</div>
@@ -122,6 +131,13 @@
 					});
 				});
 			}
+			function nl2br (str, is_xhtml) {
+				if (typeof str === 'undefined' || str === null) {
+					return '';
+				}
+				var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
+				return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + breakTag + '$2');
+			}
 			$(document).ready((e) => {
 				var params = {
 					user_id: config.user_id,
@@ -159,6 +175,7 @@
 					console.log(product);
 					$('#product_id').html(product[0].product_id);
 					$('#product_name').html(product[0].product_name);
+					$('#description').html(nl2br(product[0].description));
 					$('#product_price').html(number_format(product[0].product_price));
 					$('#status').html('Loading payment channel..');
 				});
@@ -184,15 +201,10 @@
     						console.log(invoice);
     						if(!invoice.payment_url){
     							alert('Terjadi kesalahan, Silahkan ulangi lagi atau gunakan metode pembayaran yang lain.');
-    							$.each(loader, (x,r) => {
-    							    loader[x].classList.add('hide');
-    							});
+    							$.each(loader, (x,r) => {loader[x].classList.add('hide');});
     							$('#frmCheckout').removeClass('hide');
-    						}else{
-    							window.location.href = invoice.payment_url;
-    						}
+    						}else{window.location.href = invoice.payment_url;}
     					});
-    					console.log(params);
 				    }
 				});
 			});
