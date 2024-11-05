@@ -5,62 +5,23 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-    <link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-green.css">
+    <link id="theme" rel="stylesheet" type="text/css" href="assets/css/theme-black.css">
     <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="assets/css/ubuntu.css">
     <style type="text/css">
-        * {
-            font-family: 'Ubuntu';
-            outline: none;
-            text-decoration: none;
-        }
-
-        body {
-            margin: auto;
-            max-width: 480px;
-        }
-
-        .header {
-            min-height: 100px;
-            /*border-bottom-left-radius: 20px;
-                border-bottom-right-radius: 20px;*/
-        }
-
-        .navbar {
-            width: 95%;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-        }
-
-        .nav {
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 10px 10px 10px 0px;
-        }
-
-        .footer {
-            min-height: 60px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-        }
-
-        .input {
-            font-weight: 900;
-        }
-
-        .alert {
-            min-width: 300px;
-            max-width: 300px;
-            min-height: 200px;
-            border: 1px solid red;
-            text-align: center;
-            align-content: center;
-            border-radius: 10px;
-        }
+        *{font-family: 'Ubuntu';outline: none;text-decoration: none;}
+        body{margin: auto;max-width: 480px;}
+        .header{min-height: 100px;}
+        .navbar{width: 95%;border-top-left-radius: 20px;border-top-right-radius: 20px;}
+        .nav{border-bottom-left-radius: 20px;border-bottom-right-radius: 20px;box-shadow: 10px 10px 10px 0px;}
+        .footer{min-height: 60px;border-top-left-radius: 20px;border-top-right-radius: 20px;}
+        .input{font-weight: 900;}
+        .alert{min-width: 300px;max-width: 300px;min-height: 200px;border: 1px solid red;text-align: center;align-content: center;border-radius: 10px;}
     </style>
 </head>
 
 <body>
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
     <div class="hide">
         $(if chap-id)
         <form name="sendin" action="$(link-login-only)" method="post">
@@ -152,19 +113,14 @@
                     <input type="hidden" name="dst" value="$(link-orig)" />
                     <input type="hidden" name="popup" value="true" />
 
-                    <input type="text" id="username" name="username" class="input theme-l5 border round margin-bottom"
-                        placeholder="Kode Voucher" required>
-                    <input type="hidden" id="password" name="password" class="input theme-l5 border round margin-bottom"
-                        placeholder="Password" required>
-                    <button class="input block theme round"
-                        onclick="if($('#username').val() !==''){$(this).html('Please wait..')}">Masuk</button>
+                    <input type="text" id="username" name="username" class="input theme-l5 border round margin-bottom" placeholder="Kode Voucher" required>
+                    <input type="hidden" id="password" name="password" class="input theme-l5 border round margin-bottom" placeholder="Password" required>
+                    <button class="input block theme round" onclick="if($('#username').val() !== ''){$(this).html('Please wait..')}">Masuk</button>
                 </form>
             </div>
 
             <div class="margin-bottom">
-                <p align="center" class="loader">
-                    <i class="fa fa-refresh spin"></i> Loading products..
-                </p>
+                <p align="center" class="loader"><i class="fa fa-refresh spin"></i> Loading products..</p>
                 <div class="row" id="product_list"></div>
             </div>
             <div class="padding-small margin-bottom">
@@ -175,12 +131,8 @@
                         <img class="mySlides" src="assets/images/slide3.jpg" style="width:100%">
                     </div>
                     <div class="center container section large text-white display-bottommiddle" style="width:100%">
-                        <div class="left hover-text-theme" onclick="plusDivs(-1)">
-                            &#10094;
-                        </div>
-                        <div class="right hover-text-theme" onclick="plusDivs(1)">
-                            &#10095;
-                        </div>
+                        <div class="left hover-text-theme" onclick="plusDivs(-1)">&#10094;</div>
+                        <div class="right hover-text-theme" onclick="plusDivs(1)">&#10095;</div>
                         <span class="badge demo border transparent hover-white" onclick="currentDiv(1)"></span>
                         <span class="badge demo border transparent hover-white" onclick="currentDiv(2)"></span>
                         <span class="badge demo border transparent hover-white" onclick="currentDiv(3)"></span>
@@ -191,31 +143,21 @@
         </div>
     </div>
     </div>
-    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    
     <script type="text/javascript" src="config.js"></script>
     <script type="text/javascript">
         var username = document.getElementById('username');
         var password = document.getElementById('password');
         var loader = document.getElementsByClassName('loader');
         var api_url = config.api_url;
-
-        var params = {
-            user_id: config.user_id,
-            router_id: config.router_id
-        }
-
-        function update_password() {
-            username.value = username.value;
-            password.value = username.value;
-        }
-
+        var params = {user_id: config.user_id,router_id: config.router_id}
+        function update_password(){username.value = username.value;password.value = username.value;}
         username.onkeyup = update_password;
         username.onchange = update_password;
-
-        function login_mode(mode) {
+        function login_mode(mode){
             username.value = '';
             password.value = '';
-            switch (mode) {
+            switch(mode){
                 case "voucher":
                     username.onkeyup = update_password;
                     username.onchange = update_password;
@@ -227,7 +169,7 @@
                     username.onchange = '';
                     username.placeholder = 'Username';
                     password.type = 'password';
-                    break;
+                break;
             }
         }
         function number_format(x) {
@@ -237,7 +179,6 @@
                 x = x.replace(pattern, "$1,$2");
             return x;
         }
-
         async function get_info(){
             return new Promise(resolve => {
                 $.ajax({
@@ -338,65 +279,42 @@
                 console.log(result);
             });
 
-            get_product().then(result => {
-                console.log(result);
-            });
-            get_notice().then(result => {
-                console.log(result);
-            });
-            get_images().then(result => {
-                console.log(result);
-            });
+            get_product().then(result => {console.log(result);});
+            get_notice().then(result => {console.log(result);});
+            get_images().then(result => {console.log(result);});
         });
 
         var slideIndex = 1;
-        function plusDivs(n) {
-            showDivs(slideIndex += n);
-        }
-        function currentDiv(n) {
-            showDivs(slideIndex = n);
-        }
+        function plusDivs(n) {showDivs(slideIndex += n);}
+        function currentDiv(n) {showDivs(slideIndex = n);}
         function showDivs(n) {
             var i;
             var x = document.getElementsByClassName("mySlides");
             var dots = document.getElementsByClassName("demo");
-            if (n > x.length) {
-                slideIndex = 1
-            }
-            if (n < 1) {
-                slideIndex = x.length
-            }
-            for (i = 0; i < x.length; i++) {
-                x[i].style.display = "none";
-            }
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" white", "");
-            }
+            if (n > x.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = x.length}
+            for (i = 0; i < x.length; i++) {x[i].style.display = "none";}
+            for (i = 0; i < dots.length; i++) {dots[i].className = dots[i].className.replace(" white", "");}
             x[slideIndex - 1].style.display = "block";
             dots[slideIndex - 1].className += " white";
         }
         showDivs(slideIndex);
-        setInterval(function () {
-            plusDivs(1);
-        }, 6000);
+        setInterval(function () {plusDivs(1);}, 6000);
     </script>
 
     <div class="hide">
         $(if error)
         <script type="text/javascript">
             $('body').append(`
-            <div id="alert" class="alert display-middle pale-red padding-small">
+            <div id="alert" class="alert display-middle theme-l5 padding-small">
                 <p align="center"><b class="text-red">Login Gagal</b></p>
                 <p align="center">$(error)</p>
                 <button class="button red round" onclick="$('#alert').remove()">Close</button>
             </div>
-        `);
-            setTimeout(function () {
-                $('#alert').remove();
-            }, 1000);
+            `);
+            setTimeout(function () {$('#alert').remove();}, 3000);
         </script>
         $(endif)
     </div>
 </body>
-
 </html>
