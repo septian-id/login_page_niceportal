@@ -30,7 +30,7 @@ var config = {
 add action=accept disabled=no comment="NICEPORTAL" dst-host="niceportal.web.id";
 add action=accept disabled=no comment="API" dst-host="desktop.niceradius.com";
 add action=accept disabled=no comment="DUITKU" dst-host="duitku.com";
-add action=accept disabled=no comment="DUITKU" dst-host="qrcodescan.in";
+add action=accept disabled=no comment="QRCODE" dst-host="qrcodescan.in";
 ```
 ### (Optional) Bypass Payment Gateway Midtrans
 ```js
