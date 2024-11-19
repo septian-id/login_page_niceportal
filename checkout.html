@@ -47,10 +47,10 @@
 				</div>
 				<div class="padding-small margin-bottom">
 					<span class="text-theme">Nama Lengkap</span>
-					<input id="customerName" class="input theme-l5 border round padding-small margin-bottom">
+					<input id="customerName" minlength="3" maxlength="16" class="input theme-l5 border round padding-small margin-bottom">
 
 					<span class="text-theme">Nomor Telepon</span>
-					<input type="number" id="phoneNumber" class="input theme-l5 border round margin-bottom padding-small">
+					<input type="number" id="phoneNumber" minlength="11" maxlength="13" class="input theme-l5 border round margin-bottom padding-small">
 					
 					<p align="center" class="loader"><i class="fa fa-refresh spin"></i> <span id="status">Loading product details..</span></p>
 					<div id="payment" class="hide">
@@ -181,8 +181,16 @@
 				});
 
 				$('#btnCheckout').on('click', function(){
-				    if($('#phoneNumber').val() == '' || $('#customerName').val() == ''){
-				        $('#customerName').focus();
+					var phone = $('#phoneNumber').val();
+					var name = $('#customerName').val();
+				    if(phone == '' 
+					|| name == '' 
+					|| phone.length > 13 
+					|| phone.length < 11
+					|| name.length < 3
+					|| name.length > 16
+					|| typeof name !== 'string'){
+				       $('#customerName').focus();
 				    }else{
     				    $.each(loader, (x,r) => {
     				        loader[x].classList.remove('hide');
@@ -196,6 +204,7 @@
     					params.last_name = '';
     					params.phone = $('#phoneNumber').val();
     					params.return_url = "$(link-login-only)";
+						/*
     					create_invoice(params).then(invoice => {
     						$(this).show();
     						console.log(invoice);
@@ -205,6 +214,7 @@
     							$('#frmCheckout').removeClass('hide');
     						}else{window.location.href = invoice.payment_url;}
     					});
+						*/
 				    }
 				});
 			});
