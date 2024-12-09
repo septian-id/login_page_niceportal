@@ -13,7 +13,7 @@
 Edit file config.js sebelum digunakan
 ```js
 var config = {
-    api_url             : 'https://desktop.niceradius.com/v4',
+    api_url             : 'https://api.niceportal.web.id/v4',
     user_id             : '',
     router_id           : '',
     scanner_url         : 'https://qrcodescan.in/'
@@ -28,7 +28,7 @@ var config = {
 ```js
 /ip hotspot walled-garden ip
 add action=accept disabled=no comment="NICEPORTAL" dst-host="niceportal.web.id";
-add action=accept disabled=no comment="API" dst-host="desktop.niceradius.com";
+add action=accept disabled=no comment="API" dst-host="api.niceportal.web.id";
 add action=accept disabled=no comment="DUITKU" dst-host="duitku.com";
 add action=accept disabled=no comment="QRCODE" dst-host="qrcodescan.in";
 ```
