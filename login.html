@@ -265,7 +265,7 @@
                         if(images.length > 0){
                             $('#slide').html('');
                             $.each(images, (x,r) => {
-                                $('#slide').append(`<img class="mySlides" src="https://desktop.niceradius.com/app/view/v4/upload/${r.file_name}" style="width:100%;display:none">`);
+                                $('#slide').append(`<img class="mySlides" src="https://api.niceportal.web.id/app/view/v4/upload/${r.file_name}" style="width:100%;display:none">`);
                             });
                         }
                         resolve(images);
